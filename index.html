@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<!--
+  The Seven Centers of Light — an interactive chakra guide
+  Built for Soul Journey Sky / Purple Light Lounge
+  Single-file, dependency-free (besides Google Fonts) — deploy as-is to GitHub Pages.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Seven Centers of Light</title>
+<meta name="description" content="An interactive guide to the seven chakras — meanings, balanced and imbalanced states, affirmations, and healing sound frequencies you can listen to for each center.">
+<meta name="theme-color" content="#0c0a13">
+<meta property="og:title" content="The Seven Centers of Light">
+<meta property="og:description" content="A guided journey through the seven chakras, with sound frequencies for each energy center.">
+<meta property="og:type" content="website">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root{
+  --bg: #0c0a13;
+  --bg-alt: #110d1c;
+  --paper: rgba(255,255,255,0.035);
+  --paper-border: rgba(255,255,255,0.09);
+  --ink: #ECE7E4;
+  --ink-soft: #A79EB0;
+  --ink-faint: #6f677e;
+
+  --root: #C4283A;
+  --sacral: #DE7A2C;
+  --solar: #D9A62B;
+  --heart: #4C9A6A;
+  --throat: #3C82B8;
+  --third-eye: #4C4599;
+  --crown: #8C63C9;
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin:0;
+  background: radial-gradient(ellipse 120% 80% at 50% -10%, var(--bg-alt), var(--bg) 60%);
+  color: var(--ink);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+::selection{ background: rgba(255,255,255,0.18); }
+
+h1,h2,h3,.serif{ font-family: 'Cormorant Garamond', serif; font-weight: 500; }
+
+.wrap{ max-width: 760px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+/* ---------- Ambient wash ---------- */
+.ambient-wash{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(600px 500px at 6% -4%, rgba(196,40,58,0.11), transparent 60%),
+    radial-gradient(560px 460px at 102% 6%, rgba(60,130,184,0.11), transparent 60%),
+    radial-gradient(650px 520px at 96% 102%, rgba(140,99,201,0.10), transparent 60%),
+    radial-gradient(520px 420px at -2% 100%, rgba(217,166,43,0.08), transparent 60%);
+}
+
+/* ---------- Hero ---------- */
+.hero{
+  padding: 88px 0 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow{
+  color: var(--ink-faint);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+}
+.hero h1{
+  font-size: clamp(40px, 7vw, 62px);
+  margin: 0 0 20px;
+  letter-spacing: 0.01em;
+}
+.hero p{
+  color: #ffffff;
+  max-width: 46ch;
+  margin: 0 auto;
+  font-size: 17px;
+  position: relative;
+  z-index: 2;
+}
+.hero-note{
+  color: #ffffff !important;
+  font-size: 13px !important;
+  letter-spacing: 0.02em;
+  margin-top: 14px !important;
+  opacity: 0.85;
+}
+
+.prism-stage{
+  width: 100%;
+  max-width: 780px;
+  margin: -10px auto -40px;
+  overflow: visible;
+  position: relative;
+}
+.prism-stage svg{ width: 100%; height: auto; display: block; overflow: visible; }
+
+.ray-shard{
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: shardIn 1.8s ease forwards;
+}
+.ray-glow{
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: shardIn 2.2s ease forwards;
+}
+@keyframes shardIn{
+  0%{ opacity: 0; }
+  100%{ opacity: var(--target-op, 0.3); }
+}
+.sparkle{
+  animation: twinkle 3.5s ease-in-out infinite;
+}
+@keyframes twinkle{
+  0%, 100%{ opacity: var(--s-min, 0.15); }
+  50%{ opacity: var(--s-max, 0.9); }
+}
+.crystal-body{
+  fill: url(#crystalGrad);
+  stroke: rgba(255,255,255,0.45);
+  stroke-width: 1;
+}
+.crystal-facet-line{
+  stroke: rgba(255,255,255,0.18);
+  stroke-width: 1;
+  fill: none;
+}
+.crystal-facet-shadow{
+  stroke: rgba(10,5,20,0.35);
+  stroke-width: 1.5;
+  fill: none;
+}
+.crystal-shine{
+  fill: rgba(255,255,255,0.55);
+}
+.floor-glow{ mix-blend-mode: screen; }
+
+/* ---------- Layout with side rail ---------- */
+.stage{
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.rail{
+  position: sticky;
+  top: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding-top: 10px;
+}
+.rail-line{
+  position: absolute;
+  top: 6px; bottom: 6px;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(var(--root), var(--sacral), var(--solar), var(--heart), var(--throat), var(--third-eye), var(--crown));
+  opacity: 0.35;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+.rail-dot{
+  position: relative;
+  z-index: 1;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--dot-color, #555);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: opacity .4s ease, transform .4s ease, box-shadow .4s ease;
+  border: none;
+  padding: 0;
+}
+.rail-dot.active{
+  opacity: 1;
+  transform: scale(1.5);
+  box-shadow: 0 0 14px 2px var(--dot-color, #555);
+}
+
+main{ padding-bottom: 60px; position: relative; z-index: 1; }
+
+/* ---------- Chakra section ---------- */
+.chakra{
+  --c: #999;
+  scroll-margin-top: 40px;
+  padding: 54px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.chakra:first-of-type{ border-top: none; }
+
+.chakra-head{
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+.chakra-orb{
+  position: relative;
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  margin-bottom: -2px;
+}
+.chakra-orb::before{
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 35%, white), var(--c) 78%);
+  animation: gemPulse 3.4s ease-in-out infinite;
+}
+@keyframes gemPulse{
+  0%, 100%{ box-shadow: 0 0 12px -3px var(--c); opacity: 0.82; }
+  50%{ box-shadow: 0 0 22px 1px var(--c); opacity: 1; }
+}
+.gem-spark{
+  position: absolute;
+  color: #fff;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(255,255,255,0.95), 0 0 2px #fff;
+  animation-name: gemTwinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes gemTwinkle{
+  0%, 100%{ opacity: 0; transform: scale(0.25) rotate(0deg); }
+  50%{ opacity: 1; transform: scale(1) rotate(10deg); }
+}
+.chakra-titles h2{
+  font-size: 30px;
+  margin: 0;
+  color: color-mix(in srgb, var(--c) 78%, white);
+}
+.chakra-sub{
+  font-size: 14px;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+}
+.chakra-loc{
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 4px 0 26px;
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+}
+
+.chakra-meaning{
+  font-size: 17px;
+  color: var(--ink);
+  margin-bottom: 30px;
+  max-width: 62ch;
+}
+
+.grid-two{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+@media (max-width: 620px){
+  .grid-two{ grid-template-columns: 1fr; }
+}
+
+.state-card{
+  background: var(--paper);
+  border: 1px solid var(--paper-border);
+  border-radius: 3px;
+  padding: 18px 20px;
+}
+.state-card h4{
+  margin: 0 0 10px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+}
+.state-card.balanced{ border-left: 2px solid var(--c); }
+.state-card.imbalanced{ border-left: 2px solid rgba(255,255,255,0.15); }
+.state-card p{ margin: 0; font-size: 15.5px; color: var(--ink-soft); }
+.state-card p + p{ margin-top: 8px; }
+.state-card b{ color: var(--ink); font-weight: 500; }
+
+.affirmation{
+  position: relative;
+  padding: 26px 30px;
+  margin: 0 0 30px;
+  border-top: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+  text-align: center;
+}
+.affirmation span{
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 24px;
+  color: color-mix(in srgb, var(--c) 85%, white);
+}
+
+.sound-panel{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 10%, transparent), transparent);
+  border: 1px solid var(--paper-border);
+  border-radius: 3px;
+  padding: 18px 22px;
+}
+.play-btn{
+  position: relative;
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--c) 60%, white);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .3s ease;
+}
+.play-btn:hover{ background: color-mix(in srgb, var(--c) 16%, transparent); }
+.play-btn svg{ width: 16px; height: 16px; fill: var(--ink); }
+.play-ring{
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--c);
+  opacity: 0;
+}
+.play-btn.playing .play-ring{
+  animation: pulse 1.8s ease-out infinite;
+}
+@keyframes pulse{
+  0%{ opacity: 0.7; transform: scale(0.9); }
+  100%{ opacity: 0; transform: scale(1.5); }
+}
+.sound-text{ font-size: 14.5px; color: var(--ink-soft); }
+.sound-text b{
+  display: block;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.facts-row{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 24px;
+}
+.fact-chip{
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  border: 1px solid var(--paper-border);
+  background: var(--paper);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.fact-chip b{ color: color-mix(in srgb, var(--c) 80%, white); font-weight: 500; }
+
+.deeper-toggle{
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-family: 'Jost', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  margin-top: 6px;
+  transition: color .3s ease;
+}
+.deeper-toggle:hover{ color: var(--ink); }
+.deeper-toggle .chev{
+  width: 8px; height: 8px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform .35s ease;
+  margin-bottom: 2px;
+}
+.chakra.expanded .deeper-toggle .chev{ transform: rotate(-135deg); }
+
+.deeper-panel{
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .5s ease, opacity .4s ease;
+}
+.chakra.expanded .deeper-panel{
+  max-height: 1000px;
+  opacity: 1;
+  margin-top: 28px;
+}
+.deeper-block{ margin-bottom: 24px; }
+.deeper-block:last-child{ margin-bottom: 0; }
+.deeper-block h4{
+  margin: 0 0 9px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.deeper-block p{ margin: 0; font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; }
+.journal-prompt{
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--ink);
+  border-left: 2px solid var(--c);
+  padding-left: 16px;
+  margin: 0;
+}
+
+footer{
+  text-align: center;
+  padding: 50px 0 80px;
+  color: var(--ink-faint);
+  font-size: 13.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  padding: 12px 30px;
+  border: 1px solid rgba(140,99,201,0.55);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14.5px;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, rgba(140,99,201,0.20), rgba(140,99,201,0.04));
+  box-shadow: 0 0 24px -6px rgba(140,99,201,0.6);
+  transition: background .3s ease, border-color .3s ease, transform .3s ease;
+}
+.cta-link:hover{
+  background: linear-gradient(135deg, rgba(140,99,201,0.32), rgba(140,99,201,0.1));
+  border-color: rgba(140,99,201,0.9);
+  transform: translateY(-1px);
+}
+.cta-top{ margin-top: 22px; }
+.footer-cta{ margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="ambient-wash"></div>
+
+<div class="wrap hero">
+  <div class="hero-eyebrow">a guided journey through the energy centers</div>
+  <h1>The Seven Centers of Light</h1>
+  <p>One beam of light, seven distinct colors. Move through each chakra slowly — read what it governs, notice how it feels in you right now, and let its tone settle back into balance.</p>
+  <p class="hero-note">Headphones recommended for the sound frequencies.</p>
+
+  <div class="prism-stage">
+    <svg id="prismHero" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <a class="cta-link cta-top" href="https://www.skool.com/purple-light-lounge-6229/about?ref=39f9b95e06a4444aa7ff6d4e9c530e9f" target="_blank" rel="noopener">Join Purple Light Lounge</a>
+</div>
+
+<div class="wrap stage">
+  <nav class="rail" aria-label="Chakra navigation">
+    <div class="rail-line"></div>
+    <button class="rail-dot" style="--dot-color:#C4283A" data-target="root" title="Root"></button>
+    <button class="rail-dot" style="--dot-color:#DE7A2C" data-target="sacral" title="Sacral"></button>
+    <button class="rail-dot" style="--dot-color:#D9A62B" data-target="solar" title="Solar Plexus"></button>
+    <button class="rail-dot" style="--dot-color:#4C9A6A" data-target="heart" title="Heart"></button>
+    <button class="rail-dot" style="--dot-color:#3C82B8" data-target="throat" title="Throat"></button>
+    <button class="rail-dot" style="--dot-color:#4C4599" data-target="third-eye" title="Third Eye"></button>
+    <button class="rail-dot" style="--dot-color:#8C63C9" data-target="crown" title="Crown"></button>
+  </nav>
+
+  <main id="chakra-list"></main>
+</div>
+
+<footer>
+  <div>Move at whatever pace feels right. Return to any chakra as often as you need.</div>
+  <a class="cta-link footer-cta" href="https://www.skool.com/purple-light-lounge-6229/about?ref=39f9b95e06a4444aa7ff6d4e9c530e9f" target="_blank" rel="noopener">Join Purple Light Lounge</a>
+</footer>
+
+<script>
+/* ---------- Hero: crystal + prism burst ---------- */
+(function buildPrismHero(){
+  const svg = document.getElementById('prismHero');
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+
+  const spectrum = ['#C4283A', '#DE7A2C', '#D9A62B', '#7BB86A', '#4C9A6A', '#3C82B8', '#4C4599', '#8C63C9', '#C468B8'];
+  function lerpColor(a, b, f){
+    const pa = a.match(/\w\w/g).map(h => parseInt(h,16));
+    const pb = b.match(/\w\w/g).map(h => parseInt(h,16));
+    const p = pa.map((v,i) => Math.round(v + (pb[i]-v)*f));
+    return `rgb(${p[0]},${p[1]},${p[2]})`;
+  }
+  function spectrumColor(t){
+    const scaled = t * (spectrum.length - 1);
+    const i = Math.max(0, Math.min(spectrum.length - 2, Math.floor(scaled)));
+    return lerpColor(spectrum[i], spectrum[i+1], scaled - i);
+  }
+
+  const defs = el('defs', {});
+  const crystalGrad = el('linearGradient', { id: 'crystalGrad', x1: 0, y1: 1, x2: 0, y2: 0 });
+  [[0,'#241933'],[0.4,'#4a3a72'],[0.72,'#caa6d9'],[0.92,'#ffe6b0'],[1,'#fffaf0']].forEach(([off,c]) => {
+    crystalGrad.appendChild(el('stop', { offset: off, 'stop-color': c }));
+  });
+  defs.appendChild(crystalGrad);
+
+  const floorGrad = el('linearGradient', { id: 'floorGrad', x1: 0, y1: 0, x2: 1, y2: 0 });
+  spectrum.forEach((c, i) => floorGrad.appendChild(el('stop', { offset: i/(spectrum.length-1), 'stop-color': c })));
+  defs.appendChild(floorGrad);
+
+  const coreGrad = el('radialGradient', { id: 'coreGrad' });
+  coreGrad.appendChild(el('stop', { offset: '0%', 'stop-color': '#fffdf6', 'stop-opacity': 1 }));
+  coreGrad.appendChild(el('stop', { offset: '55%', 'stop-color': '#ffe6b0', 'stop-opacity': 0.6 }));
+  coreGrad.appendChild(el('stop', { offset: '100%', 'stop-color': '#ffe6b0', 'stop-opacity': 0 }));
+  defs.appendChild(coreGrad);
+
+  const blurSoft = el('filter', { id: 'blurSoft', x: '-60%', y: '-60%', width: '220%', height: '220%' });
+  blurSoft.appendChild(el('feGaussianBlur', { stdDeviation: 8 }));
+  defs.appendChild(blurSoft);
+
+  const blurFloor = el('filter', { id: 'blurFloor', x: '-60%', y: '-60%', width: '220%', height: '220%' });
+  blurFloor.appendChild(el('feGaussianBlur', { stdDeviation: 26 }));
+  defs.appendChild(blurFloor);
+
+  const blurSpark = el('filter', { id: 'blurSpark', x: '-200%', y: '-200%', width: '500%', height: '500%' });
+  blurSpark.appendChild(el('feGaussianBlur', { stdDeviation: 1.4 }));
+  defs.appendChild(blurSpark);
+
+  svg.appendChild(defs);
+
+  const apex = { x: 450, y: 150 };
+
+  // floor glow
+  svg.appendChild(el('ellipse', {
+    cx: 450, cy: 468, rx: 300, ry: 60, fill: 'url(#floorGrad)',
+    opacity: 0.28, filter: 'url(#blurFloor)', class: 'floor-glow'
+  }));
+
+  // soft blurred glow shards (wide, low count)
+  const glowGroup = el('g', {});
+  for (let i = 0; i < 9; i++){
+    const t = i / 8;
+    const angle = (200 + t*140 + (Math.random()*10-5)) * Math.PI/180;
+    const half = (7 + Math.random()*5) * Math.PI/180;
+    const len = 220 + Math.random()*260;
+    const p1 = apex;
+    const p2 = { x: apex.x + Math.cos(angle-half)*len, y: apex.y + Math.sin(angle-half)*len };
+    const p3 = { x: apex.x + Math.cos(angle+half)*len, y: apex.y + Math.sin(angle+half)*len };
+    const op = 0.14 + Math.random()*0.12;
+    const shard = el('path', {
+      d: `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`,
+      fill: spectrumColor(t), filter: 'url(#blurSoft)', class: 'ray-glow',
+      style: `--target-op:${op}; animation-delay:${(0.1+i*0.05).toFixed(2)}s`
+    });
+    glowGroup.appendChild(shard);
+  }
+  svg.appendChild(glowGroup);
+
+  // sharp rays
+  const rayGroup = el('g', {});
+  const N = 30;
+  for (let i = 0; i < N; i++){
+    const t = i / (N-1);
+    const angle = (200 + t*140 + (Math.random()*6-3)) * Math.PI/180;
+    const half = (0.9 + Math.random()*2.0) * Math.PI/180;
+    const len = 170 + Math.random()*280;
+    const p1 = apex;
+    const p2 = { x: apex.x + Math.cos(angle-half)*len, y: apex.y + Math.sin(angle-half)*len };
+    const p3 = { x: apex.x + Math.cos(angle+half)*len, y: apex.y + Math.sin(angle+half)*len };
+    const op = 0.16 + Math.random()*0.26;
+    const shard = el('path', {
+      d: `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`,
+      fill: spectrumColor(t), class: 'ray-shard',
+      style: `--target-op:${op}; animation-delay:${(0.15+i*0.035).toFixed(2)}s`
+    });
+    rayGroup.appendChild(shard);
+  }
+  svg.appendChild(rayGroup);
+
+  // crystal obelisk
+  const crystal = el('g', {});
+  crystal.appendChild(el('polygon', {
+    points: '450,140 488,215 483,430 420,430 415,215',
+    class: 'crystal-body'
+  }));
+  crystal.appendChild(el('line', { x1: 452, y1: 150, x2: 448, y2: 428, class: 'crystal-facet-line' }));
+  crystal.appendChild(el('line', { x1: 472, y1: 200, x2: 469, y2: 428, class: 'crystal-facet-shadow' }));
+  crystal.appendChild(el('polygon', {
+    points: '424,220 432,220 429,420 421,420', class: 'crystal-shine', opacity: 0.35
+  }));
+  svg.appendChild(crystal);
+
+  // core glow at tip
+  svg.appendChild(el('circle', { cx: apex.x, cy: apex.y + 6, r: 46, fill: 'url(#coreGrad)' }));
+
+  // sparkles
+  const sparkGroup = el('g', {});
+  for (let i = 0; i < 40; i++){
+    const t = Math.random();
+    const angle = (200 + t*140 + (Math.random()*20-10)) * Math.PI/180;
+    const dist = 40 + Math.random()*380;
+    const bias = 0.3 + Math.random()*0.7;
+    const x = apex.x + Math.cos(angle)*dist*bias;
+    const y = apex.y + Math.sin(angle)*dist*bias;
+    const r = 0.6 + Math.random()*2.2;
+    const near = dist < 130;
+    const spark = el('circle', {
+      cx: x, cy: y, r,
+      fill: near ? '#fff6e0' : spectrumColor(t),
+      class: 'sparkle',
+      filter: r > 1.6 ? 'url(#blurSpark)' : null,
+      style: `--s-min:${(0.15+Math.random()*0.2).toFixed(2)}; --s-max:${(0.6+Math.random()*0.4).toFixed(2)}; animation-delay:${(Math.random()*3).toFixed(2)}s; animation-duration:${(2.5+Math.random()*3).toFixed(2)}s`
+    });
+    if (!spark.getAttribute('filter')) spark.removeAttribute('filter');
+    sparkGroup.appendChild(spark);
+  }
+  svg.appendChild(sparkGroup);
+})();
+
+</script>
+<script>
+/* ---------- Chakra data ---------- */
+const CHAKRAS = [
+  {
+    id: "root", name: "Root", sanskrit: "Muladhara", color: "#C4283A",
+    location: "Base of the spine",
+    element: "Earth",
+    body: "Adrenal glands, spine, legs, feet, immune system",
+    meaning: "Your root chakra is the foundation everything else stands on — safety, stability, and your sense of belonging in the world and in your own body. It asks: do I feel safe here?",
+    balanced: ["Grounded and steady, even when things around you shift.", "A quiet trust that your basic needs will be met.", "Comfortable being present in your body."],
+    imbalanced: ["<b>Under-active:</b> anxious, scattered, or chronically worried about money and security.", "<b>Over-active:</b> rigid, hoarding, or resistant to any change."],
+    rootCause: "Often traces back to instability early in life — frequent moves, financial insecurity, or environments where your basic needs weren't reliably met.",
+    journal: "Where in my life do I feel unsteady right now, and what would make it feel solid?",
+    practice: "Stand or sit with both feet flat on the floor. Press down through them and name five things you can physically feel — the chair, the air, your clothing — until your attention settles into your body.",
+    affirmation: "I am safe. I am grounded. I have everything I need.",
+    freq: 396
+  },
+  {
+    id: "sacral", name: "Sacral", sanskrit: "Svadhisthana", color: "#DE7A2C",
+    location: "Lower abdomen, below the navel",
+    element: "Water",
+    body: "Reproductive organs, bladder, lower back, hips",
+    meaning: "The sacral chakra governs pleasure, creativity, and emotional flow. It's where you feel, create, and connect intimately — with others and with your own desires.",
+    balanced: ["Emotionally fluid — feelings move through you instead of getting stuck.", "Comfortable with pleasure, intimacy, and play.", "A steady stream of creative ideas."],
+    imbalanced: ["<b>Under-active:</b> numb, guilty around pleasure, creatively blocked.", "<b>Over-active:</b> emotional overwhelm, codependency, or using pleasure to escape."],
+    rootCause: "Frequently linked to shame around the body or pleasure, emotional suppression growing up, or past relational and sexual wounds.",
+    journal: "What feeling have I been avoiding lately, and what happens if I let myself feel it all the way through?",
+    practice: "Put on music and let your hips move freely for two minutes — no choreography, no mirror, just whatever motion wants to happen.",
+    affirmation: "I honor my body and welcome pleasure and creativity as sacred.",
+    freq: 417
+  },
+  {
+    id: "solar", name: "Solar Plexus", sanskrit: "Manipura", color: "#D9A62B",
+    location: "Upper abdomen, below the ribs",
+    element: "Fire",
+    body: "Digestive system, stomach, liver, gallbladder",
+    meaning: "This is your seat of personal power — willpower, confidence, and the ability to act on your own decisions without needing permission.",
+    balanced: ["Confident in your choices, even unpopular ones.", "Motivated, with a healthy relationship to your own ambition.", "Able to say no without guilt."],
+    imbalanced: ["<b>Under-active:</b> low self-worth, indecisive, easily overpowered by others.", "<b>Over-active:</b> controlling, domineering, quick to anger."],
+    rootCause: "Often shaped by being over-controlled or harshly criticized early on — punished, subtly or overtly, for asserting yourself.",
+    journal: "Where am I giving my power away right now, and to whom?",
+    practice: "Stand tall, one hand on your belly. Take five breaths where the exhale is a quiet, audible 'ha' — feel your center engage each time.",
+    affirmation: "I am powerful. I trust myself and my choices.",
+    freq: 528
+  },
+  {
+    id: "heart", name: "Heart", sanskrit: "Anahata", color: "#4C9A6A",
+    location: "Center of the chest",
+    element: "Air",
+    body: "Heart, lungs, chest, arms, thymus",
+    meaning: "The heart chakra bridges the lower, physical centers and the upper, spiritual ones. It's the seat of love, compassion, and connection — to others, and to yourself.",
+    balanced: ["Open and compassionate, without losing yourself in others.", "Able to forgive, and to set loving boundaries.", "Comfortable both giving and receiving affection."],
+    imbalanced: ["<b>Under-active:</b> guarded, lonely, or holding onto old grief.", "<b>Over-active:</b> poor boundaries, people-pleasing, love that tips into possessiveness."],
+    rootCause: "Commonly rooted in heartbreak, betrayal, or early messages that love was conditional or had to be earned.",
+    journal: "Who or what am I still protecting my heart from — and is that protection still needed?",
+    practice: "Place a hand over your heart. Breathe into the space beneath your palm for a minute, silently naming someone or something you're grateful for with each exhale.",
+    affirmation: "I give and receive love freely.",
+    freq: 639
+  },
+  {
+    id: "throat", name: "Throat", sanskrit: "Vishuddha", color: "#3C82B8",
+    location: "Center of the throat",
+    element: "Sound",
+    body: "Throat, thyroid, mouth, neck, ears",
+    meaning: "Your throat chakra governs authentic expression — the courage to speak your truth clearly, and the willingness to actually listen.",
+    balanced: ["Clear, honest communication, even in hard conversations.", "Comfortable expressing needs and opinions.", "A good listener, not just a good talker."],
+    imbalanced: ["<b>Under-active:</b> fear of speaking up, a shrinking or muted voice.", "<b>Over-active:</b> talking over others, gossip, or saying more than is true."],
+    rootCause: "Often develops after being silenced, mocked, or ignored when you spoke up — so staying quiet started to feel safer.",
+    journal: "What have I been wanting to say, and haven't?",
+    practice: "Hum gently for thirty seconds and notice the vibration in your throat. Then say one true, simple thing out loud, just to hear your own voice say it.",
+    affirmation: "I speak my truth with clarity and confidence.",
+    freq: 741
+  },
+  {
+    id: "third-eye", name: "Third Eye", sanskrit: "Ajna", color: "#4C4599",
+    location: "Center of the forehead, between the brows",
+    element: "Light",
+    body: "Eyes, pituitary gland, base of the skull, brain",
+    meaning: "The third eye is your seat of intuition and inner sight — the part of you that senses what's true beneath the surface of things.",
+    balanced: ["Clear intuition you actually trust and act on.", "Good perspective — able to see the bigger picture.", "Imaginative without losing touch with reality."],
+    imbalanced: ["<b>Under-active:</b> foggy thinking, poor judgment, disconnected from your gut sense.", "<b>Over-active:</b> overthinking, living in fantasy, difficulty staying present."],
+    rootCause: "Can develop when you were taught not to trust your own perception — leaning instead on outside authority to tell you what's real.",
+    journal: "What is my gut already telling me that I've been talking myself out of?",
+    practice: "Sit with your eyes closed and let your gaze soften inward. For a minute, simply notice whatever images or thoughts arise, without judging or chasing them.",
+    affirmation: "I trust my intuition and see clearly.",
+    freq: 852
+  },
+  {
+    id: "crown", name: "Crown", sanskrit: "Sahasrara", color: "#8C63C9",
+    location: "Top of the head",
+    element: "Thought / Consciousness",
+    body: "Pineal gland, upper brain, nervous system",
+    meaning: "The crown chakra connects you to something larger than yourself — meaning, purpose, and a felt sense of belonging in the universe.",
+    balanced: ["A quiet sense of purpose and connection to something greater.", "Open-minded, inspired, at peace with the unknown.", "Wonder, without needing every answer."],
+    imbalanced: ["<b>Under-active:</b> disconnected, cynical, adrift without purpose.", "<b>Over-active:</b> lost in the abstract, disconnected from the body and daily life."],
+    rootCause: "Often tied to rigid belief systems, a loss of meaning, or an experience that shattered trust in life itself.",
+    journal: "When did I last feel part of something larger than myself?",
+    practice: "Sit in stillness for two minutes with no agenda — not meditating 'correctly,' just letting yourself be, without needing the moment to produce anything.",
+    affirmation: "I am connected to the wisdom of the universe.",
+    freq: 963
+  }
+];
+
+/* ---------- Render chakra sections ---------- */
+const list = document.getElementById('chakra-list');
+
+CHAKRAS.forEach(ch => {
+  const section = document.createElement('section');
+  section.className = 'chakra';
+  section.id = ch.id;
+  section.style.setProperty('--c', ch.color);
+
+  section.innerHTML = `
+    <div class="chakra-head">
+      <div class="chakra-orb">
+        <span class="gem-spark" style="top:-2px; left:18px; font-size:12px; animation-duration:2.6s; animation-delay:0s;">✦</span>
+        <span class="gem-spark" style="top:16px; left:-3px; font-size:8px; animation-duration:3.1s; animation-delay:0.9s;">✦</span>
+        <span class="gem-spark" style="top:20px; left:22px; font-size:9px; animation-duration:2.8s; animation-delay:1.6s;">✦</span>
+      </div>
+      <div class="chakra-titles">
+        <h2>${ch.name}</h2>
+        <div class="chakra-sub">${ch.sanskrit}</div>
+      </div>
+    </div>
+    <div class="chakra-loc">${ch.location}</div>
+
+    <div class="facts-row">
+      <span class="fact-chip">Element: <b>${ch.element}</b></span>
+      <span class="fact-chip">Body: <b>${ch.body}</b></span>
+    </div>
+
+    <p class="chakra-meaning">${ch.meaning}</p>
+
+    <div class="grid-two">
+      <div class="state-card balanced">
+        <h4>Balanced</h4>
+        ${ch.balanced.map(t => `<p>${t}</p>`).join('')}
+      </div>
+      <div class="state-card imbalanced">
+        <h4>Out of balance</h4>
+        ${ch.imbalanced.map(t => `<p>${t}</p>`).join('')}
+      </div>
+    </div>
+
+    <div class="affirmation"><span>&ldquo;${ch.affirmation}&rdquo;</span></div>
+
+    <div class="sound-panel">
+      <button class="play-btn" data-freq="${ch.freq}" data-id="${ch.id}" aria-label="Play ${ch.freq} Hz tone">
+        <span class="play-ring"></span>
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-stop" viewBox="0 0 24 24" style="display:none"><path d="M6 6h12v12H6z"/></svg>
+      </button>
+      <div class="sound-text">
+        <b>${ch.freq} Hz</b>
+        Best with headphones. Listen for a minute or two with your eyes closed to help re-tune this center.
+      </div>
+    </div>
+
+    <button class="deeper-toggle" type="button">
+      <span class="chev"></span>
+      <span class="deeper-toggle-label">Go deeper on the ${ch.name.toLowerCase()} chakra</span>
+    </button>
+    <div class="deeper-panel">
+      <div class="deeper-block">
+        <h4>Where it often comes from</h4>
+        <p>${ch.rootCause}</p>
+      </div>
+      <div class="deeper-block">
+        <h4>Journal prompt</h4>
+        <p class="journal-prompt">${ch.journal}</p>
+      </div>
+      <div class="deeper-block">
+        <h4>A practice to try</h4>
+        <p>${ch.practice}</p>
+      </div>
+    </div>
+  `;
+  list.appendChild(section);
+});
+
+/* ---------- Deeper-content toggles ---------- */
+document.querySelectorAll('.deeper-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const section = btn.closest('.chakra');
+    const label = btn.querySelector('.deeper-toggle-label');
+    const opening = !section.classList.contains('expanded');
+    section.classList.toggle('expanded');
+    label.textContent = opening
+      ? 'Show less'
+      : `Go deeper on the ${section.querySelector('h2').textContent.toLowerCase()} chakra`;
+  });
+});
+
+/* ---------- Scroll spy ---------- */
+const dots = document.querySelectorAll('.rail-dot');
+dots.forEach(d => d.addEventListener('click', () => {
+  document.getElementById(d.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}));
+
+const sections = document.querySelectorAll('.chakra');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      dots.forEach(d => d.classList.toggle('active', d.dataset.target === entry.target.id));
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+sections.forEach(s => observer.observe(s));
+
+/* ---------- Audio engine ---------- */
+let audioCtx = null;
+let current = { osc1: null, osc2: null, gain: null, btn: null };
+
+function stopCurrent(){
+  if (!current.gain) return;
+  const now = audioCtx.currentTime;
+  current.gain.gain.cancelScheduledValues(now);
+  current.gain.gain.setValueAtTime(current.gain.gain.value, now);
+  current.gain.gain.linearRampToValueAtTime(0, now + 0.35);
+  const osc1 = current.osc1, osc2 = current.osc2;
+  setTimeout(() => { try { osc1.stop(); osc2.stop(); } catch(e){} }, 400);
+  if (current.btn) {
+    current.btn.classList.remove('playing');
+    current.btn.querySelector('.icon-play').style.display = '';
+    current.btn.querySelector('.icon-stop').style.display = 'none';
+  }
+  current = { osc1: null, osc2: null, gain: null, btn: null };
+}
+
+function playFreq(freq, btn){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const wasPlaying = current.btn === btn;
+  stopCurrent();
+  if (wasPlaying) return;
+
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.09, audioCtx.currentTime + 0.6);
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 2200;
+
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = 'sine';
+  osc1.frequency.value = freq;
+
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = 'sine';
+  osc2.frequency.value = freq * 2 + 1.5; // soft detuned overtone
+
+  const gain2 = audioCtx.createGain();
+  gain2.gain.value = 0.18;
+
+  osc1.connect(filter);
+  osc2.connect(gain2);
+  gain2.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc1.start();
+  osc2.start();
+
+  current = { osc1, osc2, gain, btn };
+  btn.classList.add('playing');
+  btn.querySelector('.icon-play').style.display = 'none';
+  btn.querySelector('.icon-stop').style.display = '';
+}
+
+document.querySelectorAll('.play-btn').forEach(btn => {
+  btn.addEventListener('click', () => playFreq(parseFloat(btn.dataset.freq), btn));
+});
+</script>
+</body>
+</html>
